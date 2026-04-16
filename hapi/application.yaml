@@ -1,0 +1,52 @@
+spring:
+  main:
+    allow-circular-references: true
+  datasource:
+    url: "jdbc:postgresql://db:5432/${POSTGRES_DB}"
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driverClassName: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.format_sql: false
+      hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+      hibernate.search.enabled: false
+  flyway:
+    enabled: false
+  autoconfigure:
+    exclude:
+      # Completely remove Spring Boot's Elasticsearch client beans
+      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+      - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
+
+hapi:
+  fhir:
+    fhir_version: R4
+    default_encoding: JSON
+    default_pretty_print: true
+    reuse_cached_search_results_millis: 3000
+
+    # Expose the built-in HAPI FHIR Tester web UI.
+    # HAPI_TESTER_SERVER_ADDRESS is injected by Docker Compose (defaults to
+    # http://localhost:8080/fhir). Override it in .env or compose.yml when
+    # the server is reachable at a different hostname or port.
+    tester:
+      home:
+        name: "HAPI FHIR POC"
+        server_address: "${HAPI_TESTER_SERVER_ADDRESS:-http://localhost:8080/fhir}"
+        refuse_to_fetch_third_party_urls: false
+        fhir_version: R4
+
+    validation:
+      enabled: false            # keep startup fast for POC
+
+    cors:
+      allow_Credentials: true
+      allowed_origin:
+        - "*"                   # WARNING: wildcard CORS – restrict in production

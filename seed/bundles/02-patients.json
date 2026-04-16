@@ -1,0 +1,93 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:patient-1",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-1",
+        "identifier": [{
+          "system": "http://hospital.example.org/mrn",
+          "value": "MRN-000001"
+        }],
+        "active": true,
+        "name": [{ "family": "Walker", "given": ["Alice", "Marie"], "use": "official" }],
+        "gender": "female",
+        "birthDate": "1985-03-15",
+        "address": [{
+          "use": "home",
+          "line": ["42 Kifisias Ave"],
+          "city": "Athens",
+          "postalCode": "11523",
+          "country": "GR"
+        }],
+        "telecom": [
+          { "system": "phone", "value": "+30-210-555-0100", "use": "home" },
+          { "system": "email", "value": "alice.walker@example.com" }
+        ],
+        "generalPractitioner": [{ "reference": "Practitioner/practitioner-1" }],
+        "managingOrganization": { "reference": "Organization/org-1" }
+      },
+      "request": { "method": "PUT", "url": "Patient/patient-1" }
+    },
+    {
+      "fullUrl": "urn:uuid:patient-2",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-2",
+        "identifier": [{
+          "system": "http://hospital.example.org/mrn",
+          "value": "MRN-000002"
+        }],
+        "active": true,
+        "name": [{ "family": "Chen", "given": ["Marcus", "Lee"], "use": "official" }],
+        "gender": "male",
+        "birthDate": "1972-07-22",
+        "address": [{
+          "use": "home",
+          "line": ["7 Ermou Street"],
+          "city": "Athens",
+          "postalCode": "10563",
+          "country": "GR"
+        }],
+        "telecom": [
+          { "system": "phone", "value": "+30-210-555-0200", "use": "home" },
+          { "system": "email", "value": "marcus.chen@example.com" }
+        ],
+        "generalPractitioner": [{ "reference": "Practitioner/practitioner-2" }],
+        "managingOrganization": { "reference": "Organization/org-1" }
+      },
+      "request": { "method": "PUT", "url": "Patient/patient-2" }
+    },
+    {
+      "fullUrl": "urn:uuid:patient-3",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-3",
+        "identifier": [{
+          "system": "http://hospital.example.org/mrn",
+          "value": "MRN-000003"
+        }],
+        "active": true,
+        "name": [{ "family": "Rodriguez", "given": ["Elena", "Sofia"], "use": "official" }],
+        "gender": "female",
+        "birthDate": "1990-11-08",
+        "address": [{
+          "use": "home",
+          "line": ["15 Vouliagmenis Ave"],
+          "city": "Athens",
+          "postalCode": "16675",
+          "country": "GR"
+        }],
+        "telecom": [
+          { "system": "phone", "value": "+30-210-555-0300", "use": "home" },
+          { "system": "email", "value": "elena.rodriguez@example.com" }
+        ],
+        "generalPractitioner": [{ "reference": "Practitioner/practitioner-1" }],
+        "managingOrganization": { "reference": "Organization/org-1" }
+      },
+      "request": { "method": "PUT", "url": "Patient/patient-3" }
+    }
+  ]
+}

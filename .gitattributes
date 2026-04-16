@@ -1,0 +1,21 @@
+# Force LF line endings on checkout for all files that would break
+# under CRLF (shell scripts, Dockerfiles, YAML) regardless of the
+# developer's local core.autocrlf setting.
+
+* text=auto
+
+# Shell scripts must always be LF – CRLF breaks the shebang on Linux
+*.sh        text eol=lf
+
+# Docker & config files
+Dockerfile* text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.env*      text eol=lf
+*.json      text eol=lf
+
+# Java source
+*.java      text eol=lf
+
+# Markdown & docs
+*.md        text eol=lf

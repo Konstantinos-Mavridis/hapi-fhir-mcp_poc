@@ -1,0 +1,84 @@
+services:
+
+  # ─────────────────────────────────────────────
+  # PostgreSQL 18 – persistent FHIR data store
+  # PG18 changed PGDATA to /var/lib/postgresql/18/docker;
+  # the Docker volume therefore mounts at /var/lib/postgresql.
+  # ─────────────────────────────────────────────
+  db:
+    image: postgres:18.3-alpine3.23
+    container_name: hapi-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ─────────────────────────────────────────────
+  # HAPI FHIR server + built-in Tester UI
+  # Tester UI: http://localhost:8080/
+  # FHIR base: http://localhost:8080/fhir
+  # ─────────────────────────────────────────────
+  hapi:
+    build:
+      context: ./hapi
+      dockerfile: Dockerfile
+    container_name: hapi-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST:     db
+      POSTGRES_PORT:     5432
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_CONFIG_LOCATION: "file:///app/config/application.yaml"
+      # JAVA_TOOL_OPTIONS is read natively by the JVM (JVMTI spec).
+      # RAM-percentage flags scale the heap relative to the memory limit below.
+      JAVA_TOOL_OPTIONS: "-XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=75.0"
+      # Override the URL the Tester UI points at (defaults to localhost)
+      HAPI_TESTER_SERVER_ADDRESS: "${HAPI_TESTER_SERVER_ADDRESS:-http://localhost:8080/fhir}"
+    volumes:
+      - ./hapi/application.yaml:/app/config/application.yaml:ro
+    deploy:
+      resources:
+        limits:
+          # Caps the cgroup memory so MaxRAMPercentage has a meaningful ceiling.
+          # Raise to 2g on machines with more headroom.
+          memory: 1500m
+
+  # ─────────────────────────────────────────────
+  # One-shot seed container – runs once and exits
+  # Waits for HAPI to pass its health check first
+  # ─────────────────────────────────────────────
+  seed:
+    build:
+      context: ./seed
+      dockerfile: Dockerfile
+    container_name: hapi-seed
+    depends_on:
+      hapi:
+        condition: service_healthy
+    environment:
+      FHIR_BASE_URL: "http://hapi:8080/fhir"
+    restart: "no"
+
+volumes:
+  pgdata:
+    driver: local

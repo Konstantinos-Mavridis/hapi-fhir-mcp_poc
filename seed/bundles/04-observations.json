@@ -1,0 +1,170 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bp-1",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs", "display": "Vital Signs" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "85354-9", "display": "Blood pressure panel" }],
+          "text": "Blood Pressure"
+        },
+        "subject": { "reference": "Patient/patient-2" },
+        "effectiveDateTime": "2024-10-15T09:30:00+02:00",
+        "performer": [{ "reference": "Practitioner/practitioner-2" }],
+        "component": [
+          {
+            "code": { "coding": [{ "system": "http://loinc.org", "code": "8480-6", "display": "Systolic blood pressure" }] },
+            "valueQuantity": { "value": 148, "unit": "mmHg", "system": "http://unitsofmeasure.org", "code": "mm[Hg]" },
+            "interpretation": [{ "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation", "code": "H", "display": "High" }] }]
+          },
+          {
+            "code": { "coding": [{ "system": "http://loinc.org", "code": "8462-4", "display": "Diastolic blood pressure" }] },
+            "valueQuantity": { "value": 94, "unit": "mmHg", "system": "http://unitsofmeasure.org", "code": "mm[Hg]" },
+            "interpretation": [{ "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation", "code": "H", "display": "High" }] }]
+          }
+        ]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-bp-1" }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bp-2",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "85354-9", "display": "Blood pressure panel" }],
+          "text": "Blood Pressure"
+        },
+        "subject": { "reference": "Patient/patient-2" },
+        "effectiveDateTime": "2025-01-20T10:00:00+02:00",
+        "performer": [{ "reference": "Practitioner/practitioner-2" }],
+        "component": [
+          {
+            "code": { "coding": [{ "system": "http://loinc.org", "code": "8480-6", "display": "Systolic blood pressure" }] },
+            "valueQuantity": { "value": 138, "unit": "mmHg", "system": "http://unitsofmeasure.org", "code": "mm[Hg]" }
+          },
+          {
+            "code": { "coding": [{ "system": "http://loinc.org", "code": "8462-4", "display": "Diastolic blood pressure" }] },
+            "valueQuantity": { "value": 88, "unit": "mmHg", "system": "http://unitsofmeasure.org", "code": "mm[Hg]" }
+          }
+        ]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-bp-2" }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-glucose-1",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "laboratory" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+          "text": "HbA1c"
+        },
+        "subject": { "reference": "Patient/patient-1" },
+        "effectiveDateTime": "2025-02-10T08:15:00+02:00",
+        "performer": [{ "reference": "Practitioner/practitioner-1" }],
+        "valueQuantity": { "value": 7.2, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" },
+        "referenceRange": [{
+          "low": { "value": 4.0, "unit": "%" },
+          "high": { "value": 5.6, "unit": "%" },
+          "text": "Normal < 5.7%"
+        }],
+        "interpretation": [{ "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation", "code": "H", "display": "High" }] }]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-glucose-1" }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-glucose-2",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "laboratory" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+          "text": "HbA1c"
+        },
+        "subject": { "reference": "Patient/patient-1" },
+        "effectiveDateTime": "2025-08-15T08:00:00+03:00",
+        "performer": [{ "reference": "Practitioner/practitioner-1" }],
+        "valueQuantity": { "value": 6.8, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" },
+        "note": [{ "text": "Improving trend. Continue current management." }]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-glucose-2" }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-spo2-1",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "59408-5", "display": "Oxygen saturation in Arterial blood by Pulse oximetry" }],
+          "text": "SpO2"
+        },
+        "subject": { "reference": "Patient/patient-3" },
+        "effectiveDateTime": "2024-12-05T14:00:00+02:00",
+        "performer": [{ "reference": "Practitioner/practitioner-1" }],
+        "valueQuantity": { "value": 96, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%" },
+        "referenceRange": [{ "low": { "value": 95, "unit": "%" }, "text": ">=95% normal" }]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-spo2-1" }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-hr-1",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "8867-4", "display": "Heart rate" }],
+          "text": "Heart Rate"
+        },
+        "subject": { "reference": "Patient/patient-2" },
+        "effectiveDateTime": "2025-01-20T10:00:00+02:00",
+        "performer": [{ "reference": "Practitioner/practitioner-2" }],
+        "valueQuantity": { "value": 88, "unit": "beats/min", "system": "http://unitsofmeasure.org", "code": "/min" },
+        "note": [{ "text": "Irregular rhythm consistent with known AF." }]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-hr-1" }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-bmi-1",
+        "status": "final",
+        "category": [{
+          "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "vital-signs" }]
+        }],
+        "code": {
+          "coding": [{ "system": "http://loinc.org", "code": "39156-5", "display": "Body mass index (BMI)" }],
+          "text": "BMI"
+        },
+        "subject": { "reference": "Patient/patient-1" },
+        "effectiveDateTime": "2025-02-10T08:15:00+02:00",
+        "performer": [{ "reference": "Practitioner/practitioner-1" }],
+        "valueQuantity": { "value": 28.4, "unit": "kg/m2", "system": "http://unitsofmeasure.org", "code": "kg/m2" },
+        "referenceRange": [{ "low": { "value": 18.5 }, "high": { "value": 24.9 }, "text": "Normal 18.5-24.9" }],
+        "interpretation": [{ "coding": [{ "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation", "code": "H", "display": "High" }] }]
+      },
+      "request": { "method": "PUT", "url": "Observation/obs-bmi-1" }
+    }
+  ]
+}
