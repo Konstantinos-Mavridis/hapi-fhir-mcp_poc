@@ -17,6 +17,31 @@ spring:
       hibernate.search.enabled: false
   flyway:
     enabled: false
+
+  # ── Model Context Protocol (MCP) server ─────────────────────────────────────
+  # Exposes HAPI FHIR as an MCP tool server at POST /mcp (Streamable HTTP).
+  # Connect any MCP client (Claude Desktop, Cursor, MCP Inspector) to:
+  #   http://localhost:8080/mcp
+  #
+  # Claude Desktop (claude_desktop_config.json):
+  #   "mcpServers": {
+  #     "hapi-fhir-mcp_poc": {
+  #       "command": "npx",
+  #       "args": ["mcp-remote@latest", "http://localhost:8080/mcp"]
+  #     }
+  #   }
+  #
+  # MCP Inspector (browser-based testing):
+  #   npx @modelcontextprotocol/inspector
+  #   → Connect to: http://localhost:8080/mcp  (Streamable HTTP)
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: HAPI-FHIR MCP POC
+        instructions: >
+          This server provides access to the MCP POC HAPI-FHIR JPA store.
+          Use it to query, create, and update FHIR resources. All resources follow HL7 FHIR.
   autoconfigure:
     exclude:
       # Completely remove Spring Boot's Elasticsearch client beans
@@ -24,6 +49,9 @@ spring:
       - org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
+      # hapi-fhir: Spring AI MCP Server Auto Configuration is currently not supported 
+      - org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration
+      - org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerSpecificationFactoryAutoConfiguration
 
 hapi:
   fhir:
