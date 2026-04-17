@@ -1,6 +1,7 @@
 # HAPI FHIR MCP POC
 
-A Docker Compose v2 stack with HAPI FHIR R4, PostgreSQL 18, and pre-loaded synthetic clinical data.
+A Docker Compose v2 stack with HAPI FHIR R4, PostgreSQL 18, pre-loaded synthetic clinical data,
+and a FHIR MCP server that exposes the dataset to AI clients.
 
 ```
 ┌──────────────┐     JDBC      ┌─────────────────┐
@@ -8,15 +9,20 @@ A Docker Compose v2 stack with HAPI FHIR R4, PostgreSQL 18, and pre-loaded synth
 │  (hapi-db)   │               │  + Tester UI    │
 └──────────────┘               └────────┬────────┘
                                         │ FHIR REST
-                               ┌────────▼────────┐
-                               │   seed (1-shot)  │
-                               │  POSTs bundles   │
-                               └─────────────────┘
+                    ┌───────────────┬────────▼────────┐
+                    │               │   seed (1-shot)  │
+                    │               │  POSTs bundles   │
+         MCP :8000  │               └─────────────────┘
+    ┌─────────────└
+    │ fhir-mcp-server │
+    └────────────────┘
 ```
 
 ## Quick start
 
 ```bash
+cp .env.example .env
+# Edit .env and set POSTGRES_PASSWORD
 docker compose up --build
 ```
 
@@ -27,6 +33,49 @@ Wait ~90 s for HAPI to initialise Hibernate + seed to finish. Then:
 | http://localhost:8080/ | HAPI FHIR Tester UI |
 | http://localhost:8080/fhir | FHIR R4 base endpoint |
 | http://localhost:8080/fhir/metadata | CapabilityStatement |
+| http://localhost:8000/mcp | FHIR MCP endpoint (streamable-http) |
+
+## MCP Integration
+
+The `mcp` service uses [wso2/fhir-mcp-server](https://github.com/wso2/fhir-mcp-server) and speaks
+the **MCP 2025-03-26 streamable-http** transport. Point any MCP-compatible AI client at
+`http://localhost:8000/mcp`.
+
+### VS Code (GitHub Copilot)
+
+Add to `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "fhir": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp"
+    }
+  }
+}
+```
+
+### Claude Desktop
+
+Add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "fhir": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:8000/mcp"]
+    }
+  }
+}
+```
+
+### MCP Inspector
+
+```bash
+npx @modelcontextprotocol/inspector http://localhost:8000/mcp
+```
 
 ## Seeded data
 
@@ -93,6 +142,14 @@ Before deploying to any environment beyond local development:
    ```
 
 3. **Restrict CORS origins** in `./hapi/application.yaml` to only trusted domains.
+
+4. **Disable or secure the MCP server** — `FHIR_SERVER_DISABLE_AUTHORIZATION=True` is set for
+   local PoC use only. For any networked deployment, configure SMART-on-FHIR credentials in `.env`:
+   ```
+   FHIR_SERVER_CLIENT_ID=<client-id>
+   FHIR_SERVER_CLIENT_SECRET=<client-secret>
+   FHIR_SERVER_SCOPES=fhirUser openid
+   ```
 
 > **PostgreSQL 18 note** – if `postgres:18` is not yet on Docker Hub in your region,
 > pin to `postgres:17` in `compose.yml` as a fallback.
