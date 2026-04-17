@@ -56,6 +56,12 @@ services:
       HAPI_TESTER_SERVER_ADDRESS: "${HAPI_TESTER_SERVER_ADDRESS:-http://localhost:8080/fhir}"
     volumes:
       - ./hapi/application.yaml:/app/config/application.yaml:ro
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app", "HealthCheck"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
     deploy:
       resources:
         limits:
@@ -78,6 +84,34 @@ services:
     environment:
       FHIR_BASE_URL: "http://hapi:8080/fhir"
     restart: "no"
+
+  # ─────────────────────────────────────────────
+  # FHIR MCP Server (wso2/fhir-mcp-server)
+  # Exposes the HAPI FHIR R4 server as an MCP
+  # endpoint consumable by AI clients.
+  #
+  # MCP endpoint : http://localhost:8000/mcp
+  # Transport    : streamable-http (MCP 2025-03-26)
+  # ─────────────────────────────────────────────
+  mcp:
+    image: wso2/fhir-mcp-server:latest
+    container_name: fhir-mcp-server
+    restart: unless-stopped
+    ports:
+      - "${MCP_PORT:-8000}:8000"
+    depends_on:
+      hapi:
+        condition: service_healthy
+    environment:
+      FHIR_SERVER_BASE_URL:             "http://hapi:8080/fhir"
+      FHIR_SERVER_DISABLE_AUTHORIZATION: "True"
+      FHIR_MCP_HOST:                    "0.0.0.0"
+      FHIR_MCP_PORT:                    "8000"
+      FHIR_MCP_REQUEST_TIMEOUT:         "${MCP_REQUEST_TIMEOUT:-30}"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
 
 volumes:
   pgdata:
