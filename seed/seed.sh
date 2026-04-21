@@ -20,8 +20,8 @@ if [[ ${#bundles[@]} -eq 0 ]]; then
 fi
 
 # Create secure temporary directory with automatic cleanup
-TMPDIR=$(mktemp -d)
-trap "rm -rf $TMPDIR" EXIT
+WORK_DIR=$(mktemp -d)
+trap "rm -rf $WORK_DIR" EXIT
 
 echo "==> HAPI FHIR is ready. Starting seed against ${FHIR_BASE} ..."
 
@@ -30,7 +30,7 @@ for bundle in "${bundles[@]}"; do
   name=$(basename "$bundle")
   echo ""
   echo "==> Seeding: ${name}"
-  HTTP_STATUS=$(curl -s --max-time 30 --connect-timeout 10 -o "$TMPDIR/seed_response.json" -w "%{http_code}" \
+  HTTP_STATUS=$(curl -s --max-time 30 --connect-timeout 10 -o "$WORK_DIR/seed_response.json" -w "%{http_code}" \
     -X POST "${FHIR_BASE}" \
     -H "Content-Type: application/fhir+json" \
     -H "Accept: application/fhir+json" \
@@ -40,7 +40,7 @@ for bundle in "${bundles[@]}"; do
     echo "    OK (HTTP ${HTTP_STATUS})"
   else
     echo "    ERROR: HTTP ${HTTP_STATUS} for ${name}"
-    cat "$TMPDIR/seed_response.json"
+    cat "$WORK_DIR/seed_response.json"
     SEED_FAILED=1
   fi
 done
