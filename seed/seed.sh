@@ -25,6 +25,19 @@ trap "rm -rf $WORK_DIR" EXIT
 
 echo "==> HAPI FHIR is ready. Starting seed against ${FHIR_BASE} ..."
 
+# Idempotency guard: check if sentinel resource already exists
+echo "==> Checking for existing data (sentinel: Organization/org-1)..."
+SENTINEL_STATUS=$(curl -s --max-time 10 --connect-timeout 5 -o /dev/null -w "%{http_code}" \
+  -X GET "${FHIR_BASE}/Organization/org-1" \
+  -H "Accept: application/fhir+json")
+
+if [[ "$SENTINEL_STATUS" == "200" ]]; then
+  echo "    Data already seeded (Organization/org-1 exists). Skipping seeding."
+  exit 0
+fi
+
+echo "==> Sentinel check returned HTTP ${SENTINEL_STATUS}. Proceeding with seeding..."
+
 # POST each bundle in filename order
 for bundle in "${bundles[@]}"; do
   name=$(basename "$bundle")
